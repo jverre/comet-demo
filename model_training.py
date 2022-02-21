@@ -150,7 +150,7 @@ def train_model(model_type, model_size, learning_rate):
         shutil.rmtree(model_path)
 
         st.success(f'Model can correctly predict {(history.history["val_accuracy"][-1]*100):.2f}% of images,' + \
-                   f" view performance here: https://www.comet.ml/{os.environ['COMET_WORKSPACE']}/{os.environ['COMET_PROJECT_NAME']}/view/new/panels")
+                   f" view performance here: https://www.comet.ml/{os.environ['COMET_WORKSPACE']}/{os.environ['COMET_PROJECT_NAME']}/view/Unf4twAM7RZem3UZZn30Mj0Ro/panels")
         exp.end()
 
 def page():
