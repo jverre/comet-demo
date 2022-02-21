@@ -11,6 +11,7 @@ def register_model(data, x):
         with st.spinner('Deploying the model to production'):
             # Remove stage from other version
             registry_name = f"{st.session_state['model_name']}-{st.session_state['username']}"
+            
             try:
                 model_versions = api.get_registry_model_versions(workspace=os.environ['COMET_WORKSPACE'],
                                                                 registry_name=registry_name)
@@ -38,7 +39,7 @@ def register_model(data, x):
                                                 project_name=os.environ['COMET_PROJECT_NAME'], experiment=experiment_key)
             
             api_experiment.register_model(registry_name, version=new_model_version, stages=['production'])
-            
+        
         # Display success message
         st.success(f'Model version {new_model_version} has been successfully deployed to production, you can view it here: ' +\
                   f'https://www.comet.ml/{os.environ["COMET_WORKSPACE"]}/model-registry/{registry_name}')
