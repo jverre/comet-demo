@@ -1,0 +1,5 @@
+streamlit
+tensorflow
+comet_ml
+opencv-python
+streamlit-drawable-canvas
