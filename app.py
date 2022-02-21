@@ -36,7 +36,10 @@ if "train_data" not in st.session_state:
 
 ## Initialize Comet
 if 'COMET_API_KEY' not in st.session_state:
-    st.session_state['COMET_API_KEY'] = ""
+    if 'COMET_API_KEY' in st.secrets:
+        st.session_state['COMET_API_KEY'] =  st.secrets["COMET_API_KEY"]
+    else:
+        st.session_state['COMET_API_KEY'] =  ""
     os.environ['COMET_WORKSPACE'] = 'comet-demo'
     os.environ['COMET_PROJECT_NAME'] = 'comet-demo-test-2'
 
