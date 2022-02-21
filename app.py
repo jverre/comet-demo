@@ -61,9 +61,10 @@ if 'model_name' not in st.session_state:
 
 if 'inference_model' not in st.session_state:
     st.session_state['inference_model'] = None
+
 # Page
 with st.sidebar:
-    if st.session_state['COMET_API_KEY'] =  "":
+    if st.session_state['COMET_API_KEY'] ==  "":
         COMET_API_KEY = st.text_input('Comet API Key', st.session_state['COMET_API_KEY'])
         st.session_state['COMET_API_KEY'] = COMET_API_KEY
 
