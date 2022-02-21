@@ -52,11 +52,12 @@ if 'data_exploration_page_number' not in st.session_state:
 if 'model_name' not in st.session_state:
     st.session_state['model_name'] = 'mnist-model'
 
+if 'inference_model' not in st.session_state:
+    st.session_state['inference_model'] = None
 # Page
 with st.sidebar:
     COMET_API_KEY = st.text_input('Comet API Key', st.session_state['COMET_API_KEY'])
     st.session_state['COMET_API_KEY'] = COMET_API_KEY
-    os.environ['COMET_API_KEY'] = COMET_API_KEY
 
     user_name = st.text_input('What should we call you ?', st.session_state["username"])
     st.session_state["username"] = user_name
@@ -82,4 +83,7 @@ elif page_name == '3. Deploy Model':
     model_deployment.page()
 
 elif page_name == '4. Model Inference':
-    model_inference.page()
+    if st.session_state['inference_model'] is None:
+        st.session_state['inference_model'] = model_inference.init_page()
+
+    model_inference.page(st.session_state['inference_model'])

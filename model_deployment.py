@@ -10,13 +10,14 @@ def register_model(data, x):
 
         with st.spinner('Deploying the model to production'):
             # Remove stage from other version
+            registry_name = f"{st.session_state['model_name']}-{st.session_state['username']}"
             try:
                 model_versions = api.get_registry_model_versions(workspace=os.environ['COMET_WORKSPACE'],
-                                                                registry_name=st.session_state['model_name'])
+                                                                registry_name=registry_name)
                 
                 for version in model_versions:
                     api.update_registry_model_version(workspace=os.environ['COMET_WORKSPACE'],
-                                                    registry_name=st.session_state['model_name'],
+                                                    registry_name=registry_name,
                                                     version=version,
                                                     stages=[])
             except:
@@ -24,7 +25,7 @@ def register_model(data, x):
 
             try:
                 existing_models = api.get_registry_model_versions(workspace=os.environ['COMET_WORKSPACE'],
-                                                                registry_name=st.session_state['model_name'])
+                                                                registry_name=registry_name)
                 max_model_version = max(existing_models)
             
                 new_model_version = max_model_version.split('.')
@@ -36,11 +37,11 @@ def register_model(data, x):
             api_experiment = api.get_experiment(workspace=os.environ['COMET_WORKSPACE'],
                                                 project_name=os.environ['COMET_PROJECT_NAME'], experiment=experiment_key)
             
-            api_experiment.register_model(st.session_state['model_name'], version=new_model_version, stages=['production'])
+            api_experiment.register_model(model_name=st.session_state['model_name'], registry_name=registry_name, version=new_model_version, stages=['production'])
             
         # Display success message
         st.success(f'Model version {new_model_version} has been successfully deployed to production, you can view it here: ' +\
-                  f'https://www.comet.ml/{os.environ["COMET_WORKSPACE"]}/model-registry/{st.session_state["model_name"]}')
+                  f'https://www.comet.ml/{os.environ["COMET_WORKSPACE"]}/model-registry/{registry_name}')
     
     return update
 
@@ -51,6 +52,8 @@ def page():
     During the model training process we trained a number of models, we now need to decide
     which one we would like to deploy to production.
     """)
+
+    api = comet_ml.API(api_key=st.session_state['COMET_API_KEY'])
 
     experiments = api.get_experiments(workspace=os.environ['COMET_WORKSPACE'],
                                project_name=os.environ['COMET_PROJECT_NAME'])
@@ -75,12 +78,13 @@ def page():
         except:
             username = '?'
         
-        dataframe += [{
-            'experiment_key': x['experimentKey'],
-            'username': username,
-            'experiment_name': experiment_name[x['experimentKey']],
-            'model accuracy': min_val_accuracy
-        }]
+        if username == st.session_state['username']:
+            dataframe += [{
+                'experiment_key': x['experimentKey'],
+                'username': username,
+                'experiment_name': experiment_name[x['experimentKey']],
+                'model accuracy': min_val_accuracy
+            }]
     
     dataframe = sorted(dataframe, key=lambda x: np.isnan(x['model accuracy']))
     dataframe = sorted(dataframe, key=lambda x: -x['model accuracy'])

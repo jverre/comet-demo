@@ -13,9 +13,6 @@ from streamlit_drawable_canvas import st_canvas
 import tensorflow as tf
 import time
 
-
-model = None
-
 def load_model():
     try:
         folder = './inference'
@@ -24,11 +21,12 @@ def load_model():
             shutil.rmtree(folder)
         except:
             pass
-        
+        registry_name = f"{st.session_state['model_name']}-{st.session_state['username']}"
+
         api = comet_ml.API(api_key=st.session_state['COMET_API_KEY'])
         api.download_registry_model(
             workspace=os.environ['COMET_WORKSPACE'],
-            registry_name=st.session_state['model_name'],
+            registry_name=registry_name,
             stage='production',
             output_path=folder
         )
@@ -37,24 +35,24 @@ def load_model():
         shutil.rmtree(folder)
     except:
         model = None
-        st.error('Failed to load model, make sure you have deployed a model')
+        st.error('Failed to load model, have you deployed a model in step 3. ?')
     
     return model
 
-def make_prediction(img):
-    st.image(img)
+def make_prediction(model, img):
     test_data = np.array([img]).reshape(np.array([img]).shape[0], 28, 28, 1)
     test_data = test_data.astype('float32')
     test_data /= 255
     
     prediction = model.predict(test_data)
-    st.success(f'The model thinks you drew a {np.argmax(prediction[0])} and is {np.max(prediction[0] * 100):.1f}% confident')
+    st.success(f'The model thinks this is a {np.argmax(prediction[0])} and is {np.max(prediction[0] * 100):.1f}% confident')
 
-def page():
+def init_page():
     with st.spinner('Initializing inference service'):
-        model = load_model()        
-        time.sleep(3)
+        model = load_model()      
+    return model
 
+def page(model):
     st.title('Model Inference')
 
     st.write('Now that our model is deployed, we can make predictions ! We can make predictions using a set of existing images ' +\
@@ -102,5 +100,5 @@ def page():
                 
                 st.image(img, width=250)
                 if st.button('Make prediction', key=f'inference_{index}'):
-                    make_prediction(img)
+                    make_prediction(model, img)
                 st.markdown('##')
