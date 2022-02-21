@@ -13,7 +13,7 @@ from streamlit_drawable_canvas import st_canvas
 import tensorflow as tf
 import time
 
-api = comet_ml.API()
+
 model = None
 
 def load_model():
@@ -25,6 +25,7 @@ def load_model():
         except:
             pass
         
+        api = comet_ml.API(api_key=st.session_state['COMET_API_KEY'])
         api.download_registry_model(
             workspace=os.environ['COMET_WORKSPACE'],
             registry_name=st.session_state['model_name'],
@@ -49,12 +50,11 @@ def make_prediction(img):
     prediction = model.predict(test_data)
     st.success(f'The model thinks you drew a {np.argmax(prediction[0])} and is {np.max(prediction[0] * 100):.1f}% confident')
 
-with st.spinner('Initializing inference service'):
-        model = load_model()
+def page():
+    with st.spinner('Initializing inference service'):
+        model = load_model()        
         time.sleep(3)
 
-def page():
-    
     st.title('Model Inference')
 
     st.write('Now that our model is deployed, we can make predictions ! We can make predictions using a set of existing images ' +\

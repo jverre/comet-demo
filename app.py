@@ -56,14 +56,18 @@ if 'model_name' not in st.session_state:
 with st.sidebar:
     COMET_API_KEY = st.text_input('Comet API Key', st.session_state['COMET_API_KEY'])
     st.session_state['COMET_API_KEY'] = COMET_API_KEY
+    os.environ['COMET_API_KEY'] = COMET_API_KEY
 
     user_name = st.text_input('What should we call you ?', st.session_state["username"])
     st.session_state["username"] = user_name
 
-    page_name = st.radio(
-        "Steps in building a Machine Learning model",
-        ("0. Home Page", "1. Data Exploration", "2. Model Training", "3. Deploy Model", "4. Model Inference")
-    )
+    if st.session_state['COMET_API_KEY'] != "":
+        page_name = st.radio(
+            "Steps in building a Machine Learning model",
+            ("0. Home Page", "1. Data Exploration", "2. Model Training", "3. Deploy Model", "4. Model Inference")
+        )
+    else:
+        page_name = "0. Home Page"
 
 if page_name == '0. Home Page':
     home.page()

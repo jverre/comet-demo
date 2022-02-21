@@ -3,11 +3,11 @@ import numpy as np
 import streamlit as st
 import comet_ml
 
-api = comet_ml.api.API()
-
 def register_model(data, x):
     def update():
         experiment_key = data[x]['experiment_key']
+        api = comet_ml.API(api_key=st.session_state['COMET_API_KEY'])
+
         with st.spinner('Deploying the model to production'):
             # Remove stage from other version
             try:
