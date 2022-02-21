@@ -38,7 +38,7 @@ if "train_data" not in st.session_state:
 if 'COMET_API_KEY' not in st.session_state:
     try:
         if 'COMET_API_KEY' in st.secrets:
-            st.session_state['COMET_API_KEY'] =  st.secrets["COMET_API_KEY"]
+            st.session_state['COMET_API_KEY'] = st.secrets["COMET_API_KEY"]
         else:
             st.session_state['COMET_API_KEY'] =  ""
     except:

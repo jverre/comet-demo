@@ -144,7 +144,9 @@ def train_model(model_type, model_size, learning_rate):
         
         model_path = './save_model/'
         model.save(model_path)
-        exp.log_model(st.session_state['model_name'], file_or_folder=model_path)
+
+        registry_name = f"{st.session_state['model_name']}-{st.session_state['username']}"
+        exp.log_model(registry_name, file_or_folder=model_path)
         shutil.rmtree(model_path)
 
         st.success(f'Model can correctly predict {(history.history["val_accuracy"][-1]*100):.2f}% of images,' + \

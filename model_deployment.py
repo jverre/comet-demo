@@ -37,7 +37,7 @@ def register_model(data, x):
             api_experiment = api.get_experiment(workspace=os.environ['COMET_WORKSPACE'],
                                                 project_name=os.environ['COMET_PROJECT_NAME'], experiment=experiment_key)
             
-            api_experiment.register_model(model_name=st.session_state['model_name'], registry_name=registry_name, version=new_model_version, stages=['production'])
+            api_experiment.register_model(registry_name, version=new_model_version, stages=['production'])
             
         # Display success message
         st.success(f'Model version {new_model_version} has been successfully deployed to production, you can view it here: ' +\
